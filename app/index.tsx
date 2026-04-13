@@ -4,6 +4,7 @@ import { View, ScrollView, Text, Image, StyleSheet } from 'react-native';
 
 interface Pokemon {
   name: string;
+  id: string;
   image: string;
   imageBack: string;
   types: PokemonType[];
@@ -38,11 +39,13 @@ export default function Index() {
       const data = await response.json();
 
       const detailedPokemons = await Promise.all(
-        data.results.map(async (pokemon: { name: string; url: string }) => {
+        data.results.map(async (pokemon: { name: string; url: string; id: string }) => {
           const res = await fetch(pokemon.url);
           const details = await res.json();
+
           return {
             name: pokemon.name,
+            id: details.id,
             image: details.sprites.front_default,
             imageBack: details.sprites.back_default,
             types: details.types,
@@ -66,7 +69,7 @@ export default function Index() {
       {pokemons.map((pokemon) => (
         <Link
           key={pokemon.name}
-          href={{ pathname: '/details', params: { name: pokemon.name } }}
+          href={{ pathname: '/details', params: { name: pokemon.name, id: pokemon.id } }}
           style={{
             // @ts-ignore
             backgroundColor: colorsByType[pokemon.types[0].type.name] + 50,
