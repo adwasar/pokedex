@@ -1,3 +1,4 @@
+import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View, ScrollView, Text, Image, StyleSheet } from 'react-native';
 
@@ -26,8 +27,6 @@ export const colorsByType: Record<string, string> = {
 
 export default function Index() {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
-
-  console.log(JSON.stringify(pokemons[0]?.types[0], null, 2));
 
   useEffect(() => {
     fetchPokemons();
@@ -65,8 +64,9 @@ export default function Index() {
       }}
     >
       {pokemons.map((pokemon) => (
-        <View
+        <Link
           key={pokemon.name}
+          href={{ pathname: '/details', params: { name: pokemon.name } }}
           style={{
             // @ts-ignore
             backgroundColor: colorsByType[pokemon.types[0].type.name] + 50,
@@ -74,15 +74,16 @@ export default function Index() {
             borderRadius: 20,
           }}
         >
-          <Text style={styles.name}>{pokemon.name}</Text>
-          <Text style={styles.type}>{pokemon.types[0].type.name}</Text>
-          <View style={{ flexDirection: 'row' }}>
-            <Image source={{ uri: pokemon.image }} style={{ width: 150, height: 150 }} />
-            <Image source={{ uri: pokemon.imageBack }} style={{ width: 150, height: 150 }} />
+          <View>
+            <Text style={styles.name}>{pokemon.name}</Text>
+            <Text style={styles.type}>{pokemon.types[0].type.name}</Text>
+            <View style={{ flexDirection: 'row' }}>
+              <Image source={{ uri: pokemon.image }} style={{ width: 150, height: 150 }} />
+              <Image source={{ uri: pokemon.imageBack }} style={{ width: 150, height: 150 }} />
+            </View>
           </View>
-        </View>
+        </Link>
       ))}
-      <View></View>
     </ScrollView>
   );
 }
@@ -92,6 +93,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
+    textTransform: 'capitalize',
   },
   type: {
     fontSize: 20,
