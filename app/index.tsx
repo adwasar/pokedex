@@ -15,6 +15,15 @@ interface PokemonType {
   };
 }
 
+export const colorsByType: Record<string, string> = {
+  normal: '#A8A878',
+  fire: '#F08030',
+  water: '#6890F0',
+  electric: '#F8D030',
+  grass: '#78C850',
+  bug: '#A8B820',
+};
+
 export default function Index() {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
 
@@ -26,7 +35,7 @@ export default function Index() {
 
   const fetchPokemons = async () => {
     try {
-      const response = await fetch('https://pokeapi.co/api/v2/pokemon/?limit=20&offset=20');
+      const response = await fetch('https://pokeapi.co/api/v2/pokemon/?limit=10');
       const data = await response.json();
 
       const detailedPokemons = await Promise.all(
@@ -49,9 +58,22 @@ export default function Index() {
   };
 
   return (
-    <ScrollView>
+    <ScrollView
+      contentContainerStyle={{
+        gap: 16,
+        padding: 16,
+      }}
+    >
       {pokemons.map((pokemon) => (
-        <View key={pokemon.name}>
+        <View
+          key={pokemon.name}
+          style={{
+            // @ts-ignore
+            backgroundColor: colorsByType[pokemon.types[0].type.name] + 50,
+            padding: 20,
+            borderRadius: 20,
+          }}
+        >
           <Text style={styles.name}>{pokemon.name}</Text>
           <Text style={styles.type}>{pokemon.types[0].type.name}</Text>
           <View style={{ flexDirection: 'row' }}>
@@ -69,10 +91,12 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 28,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   type: {
     fontSize: 20,
     fontWeight: 'bold',
     color: 'gray',
+    textAlign: 'center',
   },
 });
