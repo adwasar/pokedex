@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, View, Text, Image } from 'react-native';
+import { ScrollView, StyleSheet, View, Text, Image, Pressable } from 'react-native';
 
 import { colorsByType } from '@/constants/colorsByType';
 
@@ -37,6 +37,8 @@ export default function Details() {
             const response = await fetch(variety.pokemon.url);
             const data = await response.json();
 
+            console.log(JSON.stringify(data, null, 2));
+
             return {
               name: data.name,
               default: data.is_default,
@@ -56,7 +58,18 @@ export default function Details() {
     fetchPokemonSpecies();
   }, [name]);
 
-  console.log(JSON.stringify(varieties, null, 2));
+  const onPressFormCard = (selectedName: string) => {
+    setVarieties((previousVarieties) => {
+      if (!previousVarieties) {
+        return previousVarieties;
+      }
+
+      return previousVarieties.map((variety) => ({
+        ...variety,
+        active: variety.name === selectedName,
+      }));
+    });
+  };
 
   return (
     <ScrollView
@@ -76,15 +89,17 @@ export default function Details() {
           horizontal
         >
           {varieties?.map((pokemon) => (
-            <View
-              key={pokemon.name}
-              style={[
-                styles.formCard,
-                { backgroundColor: colorsByType[pokemon.types[0].type.name] + 50, opacity: pokemon.active ? 1 : 0.5 },
-              ]}
-            >
-              <Image source={{ uri: pokemon.image }} style={styles.formImage} />
-              <Text style={styles.formName}>{pokemon.name}</Text>
+            <View key={pokemon.name}>
+              <Pressable
+                onPress={() => onPressFormCard(pokemon.name)}
+                style={[
+                  styles.formCard,
+                  { backgroundColor: colorsByType[pokemon.types[0].type.name] + 50, opacity: pokemon.active ? 1 : 0.5 },
+                ]}
+              >
+                <Image source={{ uri: pokemon.image }} style={styles.formImage} />
+                <Text style={styles.formName}>{pokemon.name}</Text>
+              </Pressable>
             </View>
           ))}
         </ScrollView>
