@@ -1,11 +1,22 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, View, Text } from 'react-native';
+import { ScrollView, StyleSheet, View, Text, Image } from 'react-native';
+
+import { colorsByType } from '@/constants/colorsByType';
 
 interface Variety {
   name: string;
   default: boolean;
   image: string;
+  types: PokemonType[];
+  active: boolean;
+}
+
+interface PokemonType {
+  type: {
+    name: string;
+    url: string;
+  };
 }
 
 export default function Details() {
@@ -30,6 +41,8 @@ export default function Details() {
               name: data.name,
               default: data.is_default,
               image: data.sprites.front_default,
+              types: data.types,
+              active: data.name === name,
             };
           }),
         );
@@ -43,6 +56,8 @@ export default function Details() {
     fetchPokemonSpecies();
   }, [name]);
 
+  console.log(JSON.stringify(varieties, null, 2));
+
   return (
     <ScrollView
       contentContainerStyle={{
@@ -53,11 +68,26 @@ export default function Details() {
       <Text style={styles.id}>{formattedId}</Text>
       <View>
         <Text style={[styles.titleSecondary, { marginTop: 16 }]}>Forms:</Text>
-        {varieties?.map((variety) => (
-          <View key={variety.name}>
-            <Text>{variety.name}</Text>
-          </View>
-        ))}
+        <ScrollView
+          contentContainerStyle={{
+            gap: 16,
+          }}
+          style={styles.formList}
+          horizontal
+        >
+          {varieties?.map((pokemon) => (
+            <View
+              key={pokemon.name}
+              style={[
+                styles.formCard,
+                { backgroundColor: colorsByType[pokemon.types[0].type.name] + 50, opacity: pokemon.active ? 1 : 0.5 },
+              ]}
+            >
+              <Image source={{ uri: pokemon.image }} style={styles.formImage} />
+              <Text style={styles.formName}>{pokemon.name}</Text>
+            </View>
+          ))}
+        </ScrollView>
       </View>
     </ScrollView>
   );
@@ -80,5 +110,19 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 20,
     textAlign: 'center',
+  },
+  formList: {
+    marginTop: 16,
+  },
+  formCard: {
+    padding: 8,
+    borderRadius: 8,
+  },
+  formImage: {
+    width: 92,
+    height: 92,
+  },
+  formName: {
+    fontSize: 10,
   },
 });

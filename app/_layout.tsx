@@ -11,7 +11,7 @@ export default function RootLayout() {
           headerShown: false,
           headerBackButtonDisplayMode: 'minimal',
           presentation: 'formSheet',
-          sheetAllowedDetents: [0.3, 0.5, 0.7],
+          sheetAllowedDetents: [0.5, 0.7],
           sheetGrabberVisible: true,
         }}
       />

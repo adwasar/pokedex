@@ -2,6 +2,8 @@ import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View, ScrollView, Text, Image, StyleSheet } from 'react-native';
 
+import { colorsByType } from '@/constants/colorsByType';
+
 interface Pokemon {
   name: string;
   id: string;
@@ -16,15 +18,6 @@ interface PokemonType {
     url: string;
   };
 }
-
-export const colorsByType: Record<string, string> = {
-  normal: '#A8A878',
-  fire: '#F08030',
-  water: '#6890F0',
-  electric: '#F8D030',
-  grass: '#78C850',
-  bug: '#A8B820',
-};
 
 export default function Index() {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
