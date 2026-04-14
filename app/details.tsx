@@ -10,6 +10,7 @@ interface Variety {
   image: string;
   types: PokemonType[];
   active: boolean;
+  description: string;
 }
 
 interface PokemonType {
@@ -36,8 +37,10 @@ export default function Details() {
           data.varieties.map(async (variety: { pokemon: { url: string } }) => {
             const response = await fetch(variety.pokemon.url);
             const data = await response.json();
-
-            console.log(JSON.stringify(data, null, 2));
+            const typeNames = data.types.map((item: PokemonType) => item.type.name).join(', ');
+            const description = [`Form: ${data.name}`, `Types: ${typeNames}`, `Height: ${data.height}`, `Weight: ${data.weight}`].join(
+              '\n',
+            );
 
             return {
               name: data.name,
@@ -45,6 +48,7 @@ export default function Details() {
               image: data.sprites.front_default,
               types: data.types,
               active: data.name === name,
+              description,
             };
           }),
         );
@@ -70,6 +74,8 @@ export default function Details() {
       }));
     });
   };
+
+  const activeVariety = varieties?.find((variety) => variety.active);
 
   return (
     <ScrollView
@@ -103,6 +109,10 @@ export default function Details() {
             </View>
           ))}
         </ScrollView>
+      </View>
+      <View style={styles.descriptionSection}>
+        <Text style={[styles.titleSecondary, { marginTop: 24 }]}>Details</Text>
+        <Text style={styles.description}>{activeVariety?.description}</Text>
       </View>
     </ScrollView>
   );
@@ -139,5 +149,14 @@ const styles = StyleSheet.create({
   },
   formName: {
     fontSize: 10,
+  },
+  description: {
+    marginTop: 8,
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'left',
+  },
+  descriptionSection: {
+    alignItems: 'flex-start',
   },
 });
